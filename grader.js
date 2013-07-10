@@ -24,6 +24,7 @@ References:
 var fs = require('fs');
 var program = require('commander');
 var cheerio = require('cheerio');
+var restler = require('restler');
 var HTMLFILE_DEFAULT = "index.html";
 var CHECKSFILE_DEFAULT = "checks.json";
 var URL_DEFAULT = 'http://www.google.com/';
@@ -42,6 +43,11 @@ var assertFileExists = function(infile) {
     }
     return instr;
 };
+
+var restlerURL = function(url) {
+    console.log(restler.request(url));
+    return restler.request(url);
+}
 
 var cheerioHtmlFile = function(htmlfile) {
     return cheerio.load(fs.readFileSync(htmlfile));
@@ -75,6 +81,9 @@ if(require.main == module) {
 	.option('-u, --url <url>', 'URL to be checked', clone(assertValidURL), URL_DEFAULT)
         .parse(process.argv);
     var checkJson = checkHtmlFile(program.file, program.checks);
+    
+	console.log (restler.get(program.url));
+
     var outJson = JSON.stringify(checkJson, null, 4);
     console.log(outJson);
 } else {
