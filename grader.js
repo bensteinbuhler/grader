@@ -30,9 +30,8 @@ var CHECKSFILE_DEFAULT = "checks.json";
 var URL_DEFAULT = 'http://www.google.com/';
 
 
-var assertValidURL = function(url) {
-    var inurl = url.toString();
-    return inurl;
+var processURL = function(url) {
+    console.log('Success = ' + url);
 }
 
 var assertFileExists = function(infile) {
@@ -47,6 +46,10 @@ var assertFileExists = function(infile) {
 var restlerURL = function(url) {
     console.log(restler.request(url));
     return restler.request(url);
+}
+
+var assertValidURL = function(url) {
+    return true;
 }
 
 var cheerioHtmlFile = function(htmlfile) {
@@ -80,9 +83,14 @@ if(require.main == module) {
         .option('-f, --file <html_file>', 'Path to index.html', clone(assertFileExists), HTMLFILE_DEFAULT)
 	.option('-u, --url <url>', 'URL to be checked', clone(assertValidURL), URL_DEFAULT)
         .parse(process.argv);
-    var checkJson = checkHtmlFile(program.file, program.checks);
     
-	console.log (restler.get(program.url));
+    if (program.url != '') {
+	var html = restler.get(program.url).on('complete', processURL(program.url));
+	//var checkJson = checkHtmlFile(program.url,program.checks);
+    }
+    else {
+	var checkJson = checkHtmlFile(program.file, program.checks);
+    }
 
     var outJson = JSON.stringify(checkJson, null, 4);
     console.log(outJson);
